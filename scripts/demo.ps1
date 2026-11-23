@@ -30,7 +30,12 @@ $appt | Format-List
 Step "WF-2 Double booking the same doctor and slot is rejected (expect 409)"
 try {
     Call POST "/api/appointments" @{ patientId = $patient.id; doctorName = "Dr. Rao $suffix"; department = "CARDIOLOGY"; scheduledAt = $slot1 }
-} catch { Write-Host "Rejected: $($_.ErrorDetails.Message)" -ForegroundColor Yellow }
+} catch {
+    # Windows PowerShell 5.1 leaves ErrorDetails empty for application/problem+json, so read the body directly.
+    $status = [int]$_.Exception.Response.StatusCode
+    $problem = (New-Object IO.StreamReader($_.Exception.Response.GetResponseStream())).ReadToEnd() | ConvertFrom-Json
+    Write-Host "Rejected with $status $($problem.title): $($problem.detail)" -ForegroundColor Yellow
+}
 
 Start-Sleep -Seconds 2
 Step "WF-5 Pay the invoice"
