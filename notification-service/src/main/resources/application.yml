@@ -1,0 +1,29 @@
+server:
+  port: ${PORT:8084}
+
+spring:
+  application:
+    name: notification-service
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:notifications;DB_CLOSE_DELAY=-1}
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

@@ -1,0 +1,31 @@
+server:
+  port: ${PORT:8083}
+
+spring:
+  application:
+    name: billing-service
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:billing;DB_CLOSE_DELAY=-1}
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    producer:
+      acks: all
+    consumer:
+      group-id: billing-service
+      auto-offset-reset: earliest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
